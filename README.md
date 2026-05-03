@@ -86,3 +86,15 @@ Editar productos	✅	❌	✅	❌
 Eliminar productos	✅	❌	❌	❌
 Panel de Admin	✅	❌	❌	❌
 Carrito de compras	✅	✅	✅	✅
+
+cuenca, 03-05-2026
+Estructura completa de URLs:
+URL	Función
+http://cc2f4.test	Inicio
+http://cc2f4.test/login	Login
+http://cc2f4.test/register	Registro
+http://cc2f4.test/conocenos	Quiénes somos
+http://cc2f4.test/servicios	Servicios
+http://cc2f4.test/productos	Lista de productos
+http://cc2f4.test/carrito	Carrito de compras
+http://cc2f4.test/admin/dashboard	Panel Admin

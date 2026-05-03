@@ -105,6 +105,9 @@
                                         </button>
                                     </form>
                                 </td>
+                                <a href="<?php echo e(route('pedidos.checkout')); ?>" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                                     Finalizar Compra →
+                                </a>
                             </tr>
                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </tbody>

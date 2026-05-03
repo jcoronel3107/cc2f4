@@ -19,6 +19,7 @@
                         <a href="{{ route('carrito.index') }}" class="text-gray-600 hover:text-gray-800">
                             🛒 Carrito
                         </a>
+                        <a href="{{ route('pedidos.historial') }}" class="text-gray-600 hover:text-gray-800">📋 Mis Pedidos</a>
                         <span class="text-gray-600">{{ auth()->user()->name }}</span>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf

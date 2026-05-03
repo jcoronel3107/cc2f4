@@ -51,3 +51,12 @@ Route::middleware(['auth'])->prefix('carrito')->group(function () {
 
 Route::view('/conocenos', 'about')->name('about');
 Route::view('/servicios', 'services')->name('services');
+
+// Rutas de pedidos
+Route::middleware(['auth'])->prefix('pedidos')->group(function () {
+    Route::get('/checkout', [PedidoController::class, 'checkout'])->name('pedidos.checkout');
+    Route::post('/procesar', [PedidoController::class, 'procesar'])->name('pedidos.procesar');
+    Route::get('/confirmacion/{pedido}', [PedidoController::class, 'confirmacion'])->name('pedidos.confirmacion');
+    Route::get('/historial', [PedidoController::class, 'historial'])->name('pedidos.historial');
+    Route::get('/detalle/{pedido}', [PedidoController::class, 'detalle'])->name('pedidos.detalle');
+});

@@ -116,6 +116,15 @@ unset($__errorArgs, $__bag); ?>
                         </button>
                     </div>
                 </form>
+                <?php if($errors->any()): ?>
+                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                        <ul>
+                            <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <li><?php echo e($error); ?></li>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        </ul>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>

@@ -31,20 +31,35 @@ class ProductoController extends Controller implements HasMiddleware
     }
 
     public function store(Request $request)
-    {
-        $request->validate([
-            'nombre' => 'required|string|max:255',
-            'descripcion' => 'nullable|string',
-            'precio' => 'required|numeric|min:0',
-            'stock' => 'required|integer|min:0',
-            'imagen' => 'nullable|url'
-        ]);
+{
+    try {
+        //$request->validate([
+        //    'nombre' => 'required|string|max:255',
+        //    'descripcion' => 'nullable|string',
+        //    'precio' => 'required|numeric|min:0',
+        //    'stock' => 'required|integer|min:0',
+        //    'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+        //]);
 
-        Producto::create($request->all());
+        $datos = $request->all();
 
+        // Subir imagen
+        if ($request->hasFile('imagen')) {
+            $imagen = $request->file('imagen');
+            $nombreImagen = time() . '_' . $imagen->getClientOriginalName();
+            $ruta = $imagen->storeAs('productos', $nombreImagen, 'public');
+            $datos['imagen'] = '/storage/' . $ruta;
+        }
+
+        $producto = Producto::create($datos);
+        
         return redirect()->route('productos.index')
             ->with('success', 'Producto creado exitosamente.');
+            
+    } catch (\Exception $e) {
+        return back()->withErrors(['error' => $e->getMessage()])->withInput();
     }
+}
 
     public function show(Producto $producto)
     {
