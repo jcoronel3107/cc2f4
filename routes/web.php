@@ -48,3 +48,6 @@ Route::middleware(['auth'])->prefix('carrito')->group(function () {
     Route::delete('/remove/{id}', [CarritoController::class, 'remove'])->name('carrito.remove');
     Route::delete('/clear', [CarritoController::class, 'clear'])->name('carrito.clear');
 });
+
+Route::view('/conocenos', 'about')->name('about');
+Route::view('/servicios', 'services')->name('services');

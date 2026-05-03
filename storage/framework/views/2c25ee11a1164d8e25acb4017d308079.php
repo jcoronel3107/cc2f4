@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Crear Producto</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <?php echo app('Illuminate\Foundation\Vite')(['resources/css/app.css', 'resources/js/app.js']); ?>
 </head>
 <body class="bg-gray-100">
     <div class="min-h-screen">
@@ -12,32 +12,60 @@
             <div class="bg-white rounded-lg shadow p-6">
                 <h1 class="text-2xl font-bold mb-6">Crear Nuevo Producto</h1>
                 
-                <form action="{{ route('productos.store') }}" method="POST" enctype="multipart/form-data">
-                    @csrf
+                <form action="<?php echo e(route('productos.store')); ?>" method="POST" enctype="multipart/form-data">
+                    <?php echo csrf_field(); ?>
                     
                     <div class="mb-4">
                         <label class="block text-gray-700 text-sm font-bold mb-2">Nombre *</label>
                         <input type="text" name="nombre" class="w-full border rounded px-3 py-2" required>
-                        @error('nombre') <p class="text-red-500 text-sm">{{ $message }}</p> @enderror
+                        <?php $__errorArgs = ['nombre'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> <p class="text-red-500 text-sm"><?php echo e($message); ?></p> <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                     </div>
                     
                     <div class="mb-4">
                         <label class="block text-gray-700 text-sm font-bold mb-2">Descripción</label>
                         <textarea name="descripcion" rows="4" class="w-full border rounded px-3 py-2"></textarea>
-                        @error('descripcion') <p class="text-red-500 text-sm">{{ $message }}</p> @enderror
+                        <?php $__errorArgs = ['descripcion'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> <p class="text-red-500 text-sm"><?php echo e($message); ?></p> <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                     </div>
                     
                     <div class="grid grid-cols-2 gap-4 mb-4">
                         <div>
                             <label class="block text-gray-700 text-sm font-bold mb-2">Precio *</label>
                             <input type="number" step="0.01" name="precio" class="w-full border rounded px-3 py-2" required>
-                            @error('precio') <p class="text-red-500 text-sm">{{ $message }}</p> @enderror
+                            <?php $__errorArgs = ['precio'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> <p class="text-red-500 text-sm"><?php echo e($message); ?></p> <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                         </div>
                         
                         <div>
                             <label class="block text-gray-700 text-sm font-bold mb-2">Stock *</label>
                             <input type="number" name="stock" class="w-full border rounded px-3 py-2" required>
-                            @error('stock') <p class="text-red-500 text-sm">{{ $message }}</p> @enderror
+                            <?php $__errorArgs = ['stock'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> <p class="text-red-500 text-sm"><?php echo e($message); ?></p> <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                         </div>
                     </div>
                     
@@ -68,12 +96,19 @@
                             </div>
                         </div>
                         
-                        @error('imagen') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+                        <?php $__errorArgs = ['imagen'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> <p class="text-red-500 text-sm mt-1"><?php echo e($message); ?></p> <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                     </div>
                     
                     <!-- BOTONES - Claramente visibles -->
                     <div class="flex justify-between items-center mt-6 pt-4 border-t">
-                        <a href="{{ route('productos.index') }}" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-6 rounded transition duration-200">
+                        <a href="<?php echo e(route('productos.index')); ?>" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-6 rounded transition duration-200">
                             Cancelar
                         </a>
                         <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded transition duration-200">
@@ -106,4 +141,4 @@
         }
     </script>
 </body>
-</html>
+</html><?php /**PATH D:\desarrollo\cc2f4\cc2f4\resources\views/productos/create.blade.php ENDPATH**/ ?>
