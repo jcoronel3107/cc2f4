@@ -7,12 +7,16 @@ use App\Models\DetallePedido;
 use App\Models\Producto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Routing\Controllers\HasMiddleware;
 
-class PedidoController extends Controller
+class PedidoController extends Controller implements HasMiddleware
 {
-    public function __construct()
+    public static function middleware(): array
     {
-        $this->middleware('auth');
+        return [
+            new Middleware('auth'),
+        ];
     }
 
     // Mostrar formulario de checkout
@@ -36,7 +40,7 @@ class PedidoController extends Controller
     public function procesar(Request $request)
     {
         $request->validate([
-            'direccion' => 'required|string|min:10',
+            'direccion' => 'required|string|min:5',
             'metodo_pago' => 'required|in:tarjeta,transferencia,contraentrega',
             'notas' => 'nullable|string'
         ]);
@@ -106,7 +110,6 @@ class PedidoController extends Controller
     // Mostrar confirmación
     public function confirmacion(Pedido $pedido)
     {
-        // Verificar que el pedido pertenece al usuario autenticado
         if ($pedido->user_id !== auth()->id()) {
             abort(403);
         }
@@ -127,7 +130,7 @@ class PedidoController extends Controller
     // Ver detalle de un pedido específico
     public function detalle(Pedido $pedido)
     {
-        if ($pedido->user_id !== auth()->id() && !auth()->user()->hasRole('Administrador')) {
+        if ($pedido->user_id !== auth()->id()) {
             abort(403);
         }
         

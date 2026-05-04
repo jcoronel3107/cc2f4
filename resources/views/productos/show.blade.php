@@ -42,14 +42,20 @@
                             Editar producto
                         </a>
                         @endhasanyrole
-                        
-                        <form action="{{ route('carrito.add', $producto) }}" method="POST">
+                        @if($producto->stock > 0)
+                        <form action="{{ route('carrito.add', $producto) }}" method="POST" class="inline">
                             @csrf
-                            <input type="hidden" name="cantidad" value="1">
-                            <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-                                🛒 Agregar al carrito
-                            </button>
+                            <div class="flex items-center space-x-2">
+                                <input type="number" name="cantidad" value="1" min="1" max="{{ $producto->stock }}" class="w-20 border rounded px-2 py-2 text-center">
+                                <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                                    🛒 Agregar al carrito
+                                </button>
+                            </div>
                         </form>
+                        @else
+                        <span class="bg-red-500 text-white font-bold py-2 px-4 rounded">Producto Agotado</span>
+                        @endif
+                    </div>
                     </div>
                 </div>
             </div>

@@ -16,7 +16,7 @@
                     </div>
                     <div class="flex items-center space-x-4">
                         <a href="{{ route('carrito.index') }}" class="text-gray-600 hover:text-gray-800">🛒 Carrito</a>
-                        <a href="{{ route('pedidos.historial') }}" class="text-gray-600 hover:text-gray-800">📋 Mis Pedidos</a>
+                         <a href="{{ route('pedidos.historial') }}" class="text-gray-600 hover:text-gray-800">📋 Mis Pedidos</a>
                         <span class="text-gray-600">{{ auth()->user()->name }}</span>
                         <span class="px-2 py-1 text-xs rounded bg-blue-100 text-blue-800">
                             {{ auth()->user()->roles->first()->name ?? 'Sin rol' }}

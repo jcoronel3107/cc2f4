@@ -3,21 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crear Producto</title>
+    <title>Editar Producto</title>
     <?php echo app('Illuminate\Foundation\Vite')(['resources/css/app.css', 'resources/js/app.js']); ?>
 </head>
 <body class="bg-gray-100">
     <div class="min-h-screen">
         <div class="max-w-2xl mx-auto px-4 py-8">
             <div class="bg-white rounded-lg shadow p-6">
-                <h1 class="text-2xl font-bold mb-6">Crear Nuevo Producto</h1>
+                <h1 class="text-2xl font-bold mb-6">Editar Producto: <?php echo e($producto->nombre); ?></h1>
                 
-                <form action="<?php echo e(route('productos.store')); ?>" method="POST" enctype="multipart/form-data">
+                <form action="<?php echo e(route('productos.update', $producto)); ?>" method="POST" enctype="multipart/form-data">
                     <?php echo csrf_field(); ?>
+                    <?php echo method_field('PUT'); ?>
                     
                     <div class="mb-4">
                         <label class="block text-gray-700 text-sm font-bold mb-2">Nombre *</label>
-                        <input type="text" name="nombre" class="w-full border rounded px-3 py-2" required>
+                        <input type="text" name="nombre" value="<?php echo e(old('nombre', $producto->nombre)); ?>" class="w-full border rounded px-3 py-2" required>
                         <?php $__errorArgs = ['nombre'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -30,7 +31,7 @@ unset($__errorArgs, $__bag); ?>
                     
                     <div class="mb-4">
                         <label class="block text-gray-700 text-sm font-bold mb-2">Descripción</label>
-                        <textarea name="descripcion" rows="4" class="w-full border rounded px-3 py-2"></textarea>
+                        <textarea name="descripcion" rows="4" class="w-full border rounded px-3 py-2"><?php echo e(old('descripcion', $producto->descripcion)); ?></textarea>
                         <?php $__errorArgs = ['descripcion'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -44,7 +45,7 @@ unset($__errorArgs, $__bag); ?>
                     <div class="grid grid-cols-2 gap-4 mb-4">
                         <div>
                             <label class="block text-gray-700 text-sm font-bold mb-2">Precio *</label>
-                            <input type="number" step="0.01" name="precio" class="w-full border rounded px-3 py-2" required>
+                            <input type="number" step="0.01" name="precio" value="<?php echo e(old('precio', $producto->precio)); ?>" class="w-full border rounded px-3 py-2" required>
                             <?php $__errorArgs = ['precio'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -57,7 +58,7 @@ unset($__errorArgs, $__bag); ?>
                         
                         <div>
                             <label class="block text-gray-700 text-sm font-bold mb-2">Stock *</label>
-                            <input type="number" name="stock" class="w-full border rounded px-3 py-2" required>
+                            <input type="number" name="stock" value="<?php echo e(old('stock', $producto->stock)); ?>" class="w-full border rounded px-3 py-2" required>
                             <?php $__errorArgs = ['stock'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -70,12 +71,21 @@ unset($__errorArgs, $__bag); ?>
                     </div>
                     
                     <div class="mb-4">
-                        <label class="block text-gray-700 text-sm font-bold mb-2">Imagen del Producto</label>
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Imagen Actual</label>
+                        <?php if($producto->imagen): ?>
+                            <div id="imagenActualDiv" class="mb-4">
+                                <img src="<?php echo e($producto->imagen); ?>" class="h-32 w-32 object-cover rounded shadow">
+                            </div>
+                        <?php else: ?>
+                            <p id="sinImagenTexto" class="text-gray-500 mb-4">No hay imagen actual</p>
+                        <?php endif; ?>
+                        
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Cambiar Imagen</label>
                         
                         <!-- Selector de archivos con vista previa -->
                         <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg">
                             <div class="space-y-1 text-center">
-                                <!-- Vista previa de la imagen -->
+                                <!-- Vista previa de la nueva imagen -->
                                 <div id="vistaPrevia" class="hidden mb-4">
                                     <img id="imagenPrevisualizacion" class="mx-auto h-32 w-32 object-cover rounded-lg shadow">
                                 </div>
@@ -106,25 +116,15 @@ endif;
 unset($__errorArgs, $__bag); ?>
                     </div>
                     
-                    <!-- BOTONES - Claramente visibles -->
-                    <div class="flex justify-between items-center mt-6 pt-4 border-t">
-                        <a href="<?php echo e(route('productos.index')); ?>" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-6 rounded transition duration-200">
+                    <div class="flex justify-between">
+                        <a href="<?php echo e(route('productos.index')); ?>" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
                             Cancelar
                         </a>
-                        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded transition duration-200">
-                            ✓ Guardar Producto
+                        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                            Actualizar Producto
                         </button>
                     </div>
                 </form>
-                <?php if($errors->any()): ?>
-                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                        <ul>
-                            <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                <li><?php echo e($error); ?></li>
-                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                        </ul>
-                    </div>
-                <?php endif; ?>
             </div>
         </div>
     </div>
@@ -134,6 +134,8 @@ unset($__errorArgs, $__bag); ?>
             const input = event.target;
             const vistaPrevia = document.getElementById('vistaPrevia');
             const imagen = document.getElementById('imagenPrevisualizacion');
+            const imagenActualDiv = document.getElementById('imagenActualDiv');
+            const sinImagenTexto = document.getElementById('sinImagenTexto');
             
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
@@ -141,13 +143,19 @@ unset($__errorArgs, $__bag); ?>
                 reader.onload = function(e) {
                     imagen.src = e.target.result;
                     vistaPrevia.classList.remove('hidden');
+                    
+                    // Ocultar la imagen actual
+                    if (imagenActualDiv) imagenActualDiv.style.display = 'none';
+                    if (sinImagenTexto) sinImagenTexto.style.display = 'none';
                 }
                 
                 reader.readAsDataURL(input.files[0]);
             } else {
                 vistaPrevia.classList.add('hidden');
+                if (imagenActualDiv) imagenActualDiv.style.display = 'block';
+                if (sinImagenTexto) sinImagenTexto.style.display = 'block';
             }
         }
     </script>
 </body>
-</html><?php /**PATH D:\desarrollo\cc2f4\cc2f4\resources\views/productos/create.blade.php ENDPATH**/ ?>
+</html><?php /**PATH D:\desarrollo\cc2f4\cc2f4\resources\views/productos/edit.blade.php ENDPATH**/ ?>

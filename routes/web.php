@@ -2,8 +2,10 @@
 use App\Http\Controllers\CarritoController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PedidoController;
 use Illuminate\Support\Facades\Route;
-use Spatie\Permission\Middleware\RoleMiddleware; // ← Añade esta línea al inicio
+use Spatie\Permission\Middleware\RoleMiddleware;
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -32,8 +34,12 @@ Route::get('/prueba-creador', function () {
 // Panel de Administración (solo para rol Administrador)
 Route::middleware(['auth', RoleMiddleware::class . ':Administrador'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('admin.dashboard');
+    
+    // Rutas para gestionar pedidos (AHORA DENTRO DEL GRUPO)
+    Route::get('/pedidos', [App\Http\Controllers\Admin\PedidoAdminController::class, 'index'])->name('admin.pedidos.index');
+    Route::get('/pedidos/{pedido}', [App\Http\Controllers\Admin\PedidoAdminController::class, 'show'])->name('admin.pedidos.show');
+    Route::put('/pedidos/{pedido}/estado', [App\Http\Controllers\Admin\PedidoAdminController::class, 'updateEstado'])->name('admin.pedidos.estado');
 });
-
 
 // Rutas de productos (CRUD completo)
 Route::resource('productos', ProductoController::class);
@@ -49,10 +55,11 @@ Route::middleware(['auth'])->prefix('carrito')->group(function () {
     Route::delete('/clear', [CarritoController::class, 'clear'])->name('carrito.clear');
 });
 
+// Páginas informativas
 Route::view('/conocenos', 'about')->name('about');
 Route::view('/servicios', 'services')->name('services');
 
-// Rutas de pedidos
+// Rutas de pedidos (para clientes)
 Route::middleware(['auth'])->prefix('pedidos')->group(function () {
     Route::get('/checkout', [PedidoController::class, 'checkout'])->name('pedidos.checkout');
     Route::post('/procesar', [PedidoController::class, 'procesar'])->name('pedidos.procesar');
