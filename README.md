@@ -58,43 +58,56 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
 
-
 Resumen final del proyecto - ¡Todo completado!
 Módulo	Estado
-1. Login / Autenticación (Breeze)	✅
-2. Roles y Permisos (Spatie)	✅
-3. Panel de Administración	✅
-4. CRUD de Productos	✅
-5. Carrito de Compras	✅
-6. Protección de rutas por roles	✅
-Estructura completa del proyecto:
+Autenticación (Login/Registro)	✅
+Roles (Admin, Creador, Editor, Consultor)	✅
+Panel de Administración	✅
+CRUD de Productos	✅
+Subida de imágenes con vista previa	✅
+Carrito de compras	✅
+Checkout / Finalizar compra	✅
+Historial de pedidos para usuarios	✅
+Gestión de pedidos para Administrador	✅
+Páginas informativas (Conócenos, Servicios)	✅
+Estructura completa del sitio
 text
-rutas protegidas:
-├── /login                  # Login de usuarios
-├── /register               # Registro de usuarios
-├── /dashboard              # Dashboard general
-├── /admin/dashboard        # Solo Administrador
-├── /productos              # Lista de productos (todos los roles)
-├── /productos/create       # Solo Creador y Admin
-├── /productos/{id}/edit    # Solo Editor y Admin
-├── /carrito                # Carrito de compras (usuarios autenticados)
-Roles y permisos:
-Acción	Admin	Creador	Editor	Consultor
-Ver productos	✅	✅	✅	✅
-Crear productos	✅	✅	❌	❌
-Editar productos	✅	❌	✅	❌
-Eliminar productos	✅	❌	❌	❌
-Panel de Admin	✅	❌	❌	❌
-Carrito de compras	✅	✅	✅	✅
+http://cc2f4.test
+├── /login                 # Iniciar sesión
+├── /register              # Registrarse
+├── /productos             # Lista de productos
+├── /productos/create      # Crear producto (Creador/Admin)
+├── /productos/{id}/edit   # Editar producto (Editor/Admin)
+├── /carrito               # Carrito de compras
+├── /pedidos/checkout      # Finalizar compra
+├── /pedidos/historial     # Mis pedidos (usuario)
+├── /admin/dashboard       # Panel de Admin
+├── /admin/pedidos         # Gestionar pedidos (Admin)
+├── /conocenos             # Página informativa
+└── /servicios             # Página informativa
+Flujo completo de compra
+Usuario se registra → http://cc2f4.test/register
 
-cuenca, 03-05-2026
-Estructura completa de URLs:
-URL	Función
-http://cc2f4.test	Inicio
-http://cc2f4.test/login	Login
-http://cc2f4.test/register	Registro
-http://cc2f4.test/conocenos	Quiénes somos
-http://cc2f4.test/servicios	Servicios
-http://cc2f4.test/productos	Lista de productos
-http://cc2f4.test/carrito	Carrito de compras
-http://cc2f4.test/admin/dashboard	Panel Admin
+Agrega productos al carrito → http://cc2f4.test/productos
+
+Revisa el carrito → http://cc2f4.test/carrito
+
+Finaliza la compra → Completa dirección y método de pago
+
+Recibe confirmación → Ve el número de pedido
+
+Administrador cambia el estado → De "pendiente" a "entregado"
+
+Próximos pasos opcionales
+Pendiente___Envío de emails - Confirmación de pedido al cliente
+
+Pendiente___Facturación - Generar PDF de la factura
+
+Pendiente___Buscador de productos - Filtrar productos por nombre
+
+Pendiente___Categorías - Clasificar productos
+
+Pendiente___Calificaciones - Puntuar productos comprados
+
+Pendiente___Pasarela de pago - Integrar PayPal o Stripe
+
