@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Routing\Controllers\HasMiddleware;
+use App\Mail\PedidoConfirmacionMail;
+use Illuminate\Support\Facades\Mail;
 
 class PedidoController extends Controller implements HasMiddleware
 {
@@ -73,7 +75,12 @@ class PedidoController extends Controller implements HasMiddleware
                 'direccion_envio' => $request->direccion,
                 'notas' => $request->notas
             ]);
-            
+            // Enviar email de confirmación
+            try {
+                Mail::to(auth()->user()->email)->send(new PedidoConfirmacionMail($pedido));
+            } catch (\Exception $e) {
+                \Log::error('Error al enviar email: ' . $e->getMessage());
+            }
             // Crear detalles del pedido
             foreach ($carrito as $id => $item) {
                 DetallePedido::create([
