@@ -58,6 +58,16 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
 
++++++++++++++++++++++++++++++++++++++++++
+Resumen de cada rol:
+Rol	¿Qué puede hacer?	¿Para quién?
+Consultor	Solo ver productos y comprar	👥 Clientes normales
+Creador	Ver, comprar Y crear productos	📝 Encargado de agregar productos
+Editor	Ver, comprar Y editar productos	✏️ Encargado de modificar productos
+Administrador	Todo (crear, editar, eliminar, gestionar usuarios, pedidos)	🔧 Dueño del negocio / Admin
++++++++++++++++++++++++
+
+
 Resumen final del proyecto - ¡Todo completado!
 Módulo	Estado
 Autenticación (Login/Registro)	✅

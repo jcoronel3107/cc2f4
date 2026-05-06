@@ -2,18 +2,17 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Confirmación de Pedido</title>
+    <title>Actualización de tu Pedido</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             line-height: 1.6;
-            color: #333;
             max-width: 600px;
             margin: 0 auto;
             padding: 20px;
         }
         .header {
-            background-color: #4CAF50;
+            background-color: #2196F3;
             color: white;
             padding: 20px;
             text-align: center;
@@ -26,8 +25,18 @@
             border-top: none;
             border-radius: 0 0 5px 5px;
         }
+        .estado {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        .estado-pagado { background-color: #2196F3; color: white; }
+        .estado-enviado { background-color: #FF9800; color: white; }
+        .estado-entregado { background-color: #4CAF50; color: white; }
+        .estado-cancelado { background-color: #f44336; color: white; }
         .pedido-info {
-            background-color: #e8f4e8;
+            background-color: #e3f2fd;
             padding: 15px;
             border-radius: 5px;
             margin: 20px 0;
@@ -43,14 +52,8 @@
             text-align: left;
         }
         th {
-            background-color: #4CAF50;
+            background-color: #2196F3;
             color: white;
-        }
-        .total {
-            text-align: right;
-            font-size: 18px;
-            font-weight: bold;
-            margin-top: 20px;
         }
         .footer {
             text-align: center;
@@ -58,41 +61,28 @@
             font-size: 12px;
             color: #777;
         }
-        .estado {
-            display: inline-block;
-            background-color: #ffc107;
-            color: #333;
-            padding: 5px 10px;
-            border-radius: 3px;
-            font-size: 12px;
-            font-weight: bold;
-        }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>¡Gracias por tu compra!</h1>
+        <h1>Actualización de tu Pedido</h1>
     </div>
 
     <div class="content">
         <p>Hola <strong>{{ $pedido->user->name }}</strong>,</p>
-        <p>Hemos recibido tu pedido correctamente. A continuación te mostramos los detalles:</p>
+
+        <p>Tu pedido <strong>#{{ $pedido->numero_pedido }}</strong> ha cambiado de estado:</p>
 
         <div class="pedido-info">
-            <p><strong>Número de pedido:</strong> {{ $pedido->numero_pedido }}</p>
-            <p><strong>Fecha:</strong> {{ $pedido->created_at->format('d/m/Y H:i') }}</p>
-            <p><strong>Estado:</strong> <span class="estado">{{ ucfirst($pedido->estado) }}</span></p>
-            <p><strong>Método de pago:</strong> 
-                @switch($pedido->metodo_pago)
-                    @case('tarjeta') 💳 Tarjeta @break
-                    @case('transferencia') 🏦 Transferencia @break
-                    @case('contraentrega') 💵 Contra entrega @break
-                    @default {{ $pedido->metodo_pago }}
-                @endswitch
+            <p><strong>Estado actual:</strong> 
+                <span class="estado estado-{{ $pedido->estado }}">
+                    {{ ucfirst($pedido->estado) }}
+                </span>
             </p>
+            <p><strong>Fecha de actualización:</strong> {{ now()->format('d/m/Y H:i') }}</p>
         </div>
 
-        <h3>📦 Productos comprados</h3>
+        <h3>📦 Resumen de tu pedido</h3>
         <table>
             <thead>
                 <tr>
@@ -114,29 +104,26 @@
             </tbody>
         </table>
 
-        <div class="total">
-            <p>Total del pedido: <strong style="color: #4CAF50; font-size: 22px;">${{ number_format($pedido->total, 2) }}</strong></p>
+        <div style="text-align: right; font-size: 18px; font-weight: bold;">
+            Total: ${{ number_format($pedido->total, 2) }}
         </div>
 
-        <h3>🚚 Dirección de envío</h3>
-        <p>{{ $pedido->direccion_envio }}</p>
-
-        @if($pedido->notas)
-            <h3>📝 Notas adicionales</h3>
-            <p>{{ $pedido->notas }}</p>
+        @if($pedido->estado == 'enviado')
+            <p style="margin-top: 30px;">📦 Tu pedido está en camino. Pronto recibirás tu producto.</p>
+        @elseif($pedido->estado == 'entregado')
+            <p style="margin-top: 30px;">✅ ¡Tu pedido ha sido entregado! Esperamos que disfrutes tu compra.</p>
+        @elseif($pedido->estado == 'cancelado')
+            <p style="margin-top: 30px;">❌ Tu pedido ha sido cancelado. Si tienes dudas, contáctanos.</p>
+        @elseif($pedido->estado == 'pagado')
+            <p style="margin-top: 30px;">💰 El pago de tu pedido ha sido confirmado. Pronto lo enviaremos.</p>
         @endif
 
-        <p style="margin-top: 30px;">Pronto recibirás una notificación cuando tu pedido sea enviado.</p>
-        <p>¡Gracias por confiar en nosotros!</p>
+        <p>Puedes ver el detalle de tu pedido en:</p>
+        <p><a href="{{ url('/pedidos/detalle/' . $pedido->id) }}">Ver detalle del pedido</a></p>
     </div>
 
     <div class="footer">
-        <p>Este es un correo automático, por favor no responder.</p>
         <p>© {{ date('Y') }} Mi Tienda. Todos los derechos reservados.</p>
-        <p>
-            <a href="{{ url('/') }}">Ir a la tienda</a> | 
-            <a href="{{ url('/pedidos/historial') }}">Ver mis pedidos</a>
-        </p>
     </div>
 </body>
 </html>

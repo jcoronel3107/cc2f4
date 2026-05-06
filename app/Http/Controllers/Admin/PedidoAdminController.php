@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Pedido;
+use App\Mail\PedidoEstadoMail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Routing\Controllers\HasMiddleware;
 
@@ -39,8 +41,17 @@ class PedidoAdminController extends Controller implements HasMiddleware
             'estado' => 'required|in:pendiente,pagado,enviado,entregado,cancelado'
         ]);
 
+        $estadoAnterior = $pedido->estado;
         $pedido->estado = $request->estado;
         $pedido->save();
+        // Enviar email al cliente cuando el estado cambia
+        if ($estadoAnterior != $request->estado) {
+            try {
+                Mail::to($pedido->user->email)->send(new PedidoEstadoMail($pedido));
+            } catch (\Exception $e) {
+                \Log::error('Error al enviar email de cambio de estado: ' . $e->getMessage());
+            }
+        }
 
         return redirect()->back()->with('success', 'Estado del pedido actualizado a ' . ucfirst($pedido->estado));
     }

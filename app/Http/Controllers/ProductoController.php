@@ -18,13 +18,30 @@ class ProductoController extends Controller implements HasMiddleware
             new Middleware('role:Editor|Administrador', only: ['edit', 'update']),
         ];
     }
+public function index()
+{
+    // Depuración temporal
+    $productos = Producto::latest()->paginate(10);
+    
+    // Verifica que hay productos
+    if ($productos->isEmpty()) {
+        \Log::info('No hay productos');
+    } else {
+        \Log::info('Hay ' . $productos->count() . ' productos');
+        \Log::info($productos->toJson());
+    }
+    
+    return view('productos.index', compact('productos'));
+}
 
-    public function index()
+
+
+    /*public function index()
     {
         $productos = Producto::latest()->paginate(10);
         return view('productos.index', compact('productos'));
     }
-
+*/
     public function create()
     {
         return view('productos.create');
