@@ -1,146 +1,109 @@
-<?php if (isset($component)) { $__componentOriginal9ac128a9029c0e4701924bd2d73d7f54 = $component; } ?>
-<?php if (isset($attributes)) { $__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54 = $attributes; } ?>
-<?php $component = App\View\Components\AppLayout::resolve([] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
-<?php $component->withName('app-layout'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
-<?php $attributes = $attributes->except(\App\View\Components\AppLayout::ignoredParameterNames()); ?>
-<?php endif; ?>
-<?php $component->withAttributes([]); ?>
-     <?php $__env->slot('header', null, []); ?> 
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            <?php echo e(__('Dashboard')); ?>
-
-        </h2>
-     <?php $__env->endSlot(); ?>
-
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <!-- Mensaje de bienvenida -->
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg mb-6">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-                    <h3 class="text-lg font-bold mb-2">¡Bienvenido, <?php echo e(auth()->user()->name); ?>!</h3>
-                    <p>Tu rol actual es: 
-                        <span class="px-2 py-1 text-xs rounded bg-blue-100 text-blue-800">
-                            <?php echo e(auth()->user()->roles->first()->name ?? 'Sin rol asignado'); ?>
-
-                        </span>
-                    </p>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Tarjeta: Panel de Administración (solo Admin) -->
-                <?php if (\Illuminate\Support\Facades\Blade::check('role', 'Administrador')): ?>
-                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6">
-                        <div class="text-center mb-4">
-                            <div class="text-4xl mb-2">🔧</div>
-                            <h3 class="font-bold text-lg">Panel Admin</h3>
-                        </div>
-                        <p class="text-sm text-gray-600 dark:text-gray-400 text-center mb-4">
-                            Gestiona usuarios, productos y pedidos
-                        </p>
-                        <a href="<?php echo e(route('admin.dashboard')); ?>" class="block text-center bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
-                            Ir al Panel
-                        </a>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración</title>
+    <?php echo app('Illuminate\Foundation\Vite')(['resources/css/app.css', 'resources/js/app.js']); ?>
+</head>
+<body class="bg-gray-100">
+    <div class="min-h-screen">
+        <!-- Navegación -->
+        <nav class="bg-white shadow mb-6">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16">
+                    <div class="flex items-center">
+                        <h1 class="text-xl font-bold text-gray-800">Panel de Administración</h1>
                     </div>
-                </div>
-                <?php endif; ?>
-
-                <!-- Tarjeta: Gestión de Productos (Creador, Editor, Admin) -->
-                <?php if (\Illuminate\Support\Facades\Blade::check('hasanyrole', 'Creador|Editor|Administrador')): ?>
-                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6">
-                        <div class="text-center mb-4">
-                            <div class="text-4xl mb-2">📦</div>
-                            <h3 class="font-bold text-lg">Productos</h3>
-                        </div>
-                        <p class="text-sm text-gray-600 dark:text-gray-400 text-center mb-4">
-                            <?php if (\Illuminate\Support\Facades\Blade::check('role', 'Creador')): ?> Crear nuevos productos <?php endif; ?>
-                            <?php if (\Illuminate\Support\Facades\Blade::check('role', 'Editor')): ?> Editar productos existentes <?php endif; ?>
-                            <?php if (\Illuminate\Support\Facades\Blade::check('role', 'Administrador')): ?> Gestionar todos los productos <?php endif; ?>
-                        </p>
-                        <a href="<?php echo e(route('productos.index')); ?>" class="block text-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                            Gestionar Productos
-                        </a>
-                    </div>
-                </div>
-                <?php endif; ?>
-
-                <!-- Tarjeta: Tienda / Catálogo (todos los usuarios) -->
-                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6">
-                        <div class="text-center mb-4">
-                            <div class="text-4xl mb-2">🛍️</div>
-                            <h3 class="font-bold text-lg">Tienda</h3>
-                        </div>
-                        <p class="text-sm text-gray-600 dark:text-gray-400 text-center mb-4">
-                            Explora nuestro catálogo de productos
-                        </p>
-                        <a href="<?php echo e(route('productos.index')); ?>" class="block text-center bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">
-                            Ir a la Tienda
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Tarjeta: Mis Pedidos (todos los usuarios autenticados) -->
-                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6">
-                        <div class="text-center mb-4">
-                            <div class="text-4xl mb-2">📋</div>
-                            <h3 class="font-bold text-lg">Mis Pedidos</h3>
-                        </div>
-                        <p class="text-sm text-gray-600 dark:text-gray-400 text-center mb-4">
-                            Revisa el historial de tus compras
-                        </p>
-                        <a href="<?php echo e(route('pedidos.historial')); ?>" class="block text-center bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-                            Ver Pedidos
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Tarjeta: Mi Carrito (todos los usuarios) -->
-                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6">
-                        <div class="text-center mb-4">
-                            <div class="text-4xl mb-2">🛒</div>
-                            <h3 class="font-bold text-lg">Mi Carrito</h3>
-                        </div>
-                        <p class="text-sm text-gray-600 dark:text-gray-400 text-center mb-4">
-                            Revisa los productos en tu carrito
-                        </p>
-                        <a href="<?php echo e(route('carrito.index')); ?>" class="block text-center bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded">
-                            Ver Carrito
-                        </a>
+                    <div class="flex items-center space-x-4">
+                        <a href="<?php echo e(route('carrito.index')); ?>" class="text-gray-600 hover:text-gray-800">🛒 Carrito</a>
+                        <a href="<?php echo e(route('pedidos.historial')); ?>" class="text-gray-600 hover:text-gray-800">📋 Mis Pedidos</a>
+                        <a href="<?php echo e(route('admin.pedidos.index')); ?>" class="text-gray-600 hover:text-gray-800">📦 Pedidos</a>
+                        <a href="<?php echo e(route('admin.users.index')); ?>" class="text-gray-600 hover:text-gray-800">👥 Usuarios</a>
+                        <span class="text-gray-600"><?php echo e(auth()->user()->name); ?></span>
+                        <form method="POST" action="<?php echo e(route('logout')); ?>">
+                            <?php echo csrf_field(); ?>
+                            <button type="submit" class="text-red-600 hover:text-red-800">Cerrar Sesión</button>
+                        </form>
                     </div>
                 </div>
             </div>
+        </nav>
 
-            <!-- Información para usuarios sin permisos especiales (Consultor) -->
-            <?php if (\Illuminate\Support\Facades\Blade::check('hasrole', 'Consultor')): ?>
-            <div class="mt-8 bg-blue-50 dark:bg-blue-900 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
-                    <h3 class="text-lg font-bold mb-2 text-blue-800 dark:text-blue-200">¡Comienza a comprar!</h3>
-                    <p class="text-blue-700 dark:text-blue-300 mb-4">
-                        Explora nuestros productos, agrega al carrito y realiza tu primera compra.
-                    </p>
-                    <a href="<?php echo e(route('productos.index')); ?>" class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                        Ver Productos
-                    </a>
+        <!-- Contenido principal -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <!-- Tarjeta 1: Usuarios -->
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h3 class="text-lg font-semibold mb-2">Usuarios</h3>
+                    <p class="text-3xl font-bold text-blue-600"><?php echo e(\App\Models\User::count()); ?></p>
+                    <p class="text-gray-600 mt-2">Total de usuarios registrados</p>
+                    <a href="<?php echo e(route('admin.users.index')); ?>" class="text-blue-500 hover:text-blue-700 mt-4 inline-block">Gestionar Usuarios →</a>
+                </div>
+
+                <!-- Tarjeta 2: Productos -->
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h3 class="text-lg font-semibold mb-2">Productos</h3>
+                    <p class="text-3xl font-bold text-purple-600"><?php echo e(\App\Models\Producto::count()); ?></p>
+                    <p class="text-gray-600 mt-2">Productos en catálogo</p>
+                    <a href="<?php echo e(route('productos.index')); ?>" class="text-blue-500 hover:text-blue-700 mt-4 inline-block">Gestionar Productos →</a>
+                </div>
+
+                <!-- Tarjeta 3: Pedidos -->
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h3 class="text-lg font-semibold mb-2">Pedidos</h3>
+                    <p class="text-3xl font-bold text-green-600"><?php echo e(\App\Models\Pedido::count()); ?></p>
+                    <p class="text-gray-600 mt-2">Total de pedidos realizados</p>
+                    <a href="<?php echo e(route('admin.pedidos.index')); ?>" class="text-blue-500 hover:text-blue-700 mt-4 inline-block">Gestionar Pedidos →</a>
+                </div>
+
+                <!-- Tarjeta 4: Roles -->
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h3 class="text-lg font-semibold mb-2">Roles</h3>
+                    <p class="text-3xl font-bold text-orange-600"><?php echo e(\Spatie\Permission\Models\Role::count()); ?></p>
+                    <p class="text-gray-600 mt-2">Roles disponibles</p>
+                    <a href="#" class="text-blue-500 hover:text-blue-700 mt-4 inline-block">Gestionar Roles →</a>
                 </div>
             </div>
-            <?php endif; ?>
+
+            <!-- Sección de usuarios recientes -->
+            <div class="mt-8 bg-white rounded-lg shadow">
+                <div class="px-6 py-4 border-b">
+                    <h3 class="text-lg font-semibold">Usuarios Recientes</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead>
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ID</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nombre</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Rol</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            <?php $__currentLoopData = \App\Models\User::latest()->take(5)->get(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $usuario): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <tr>
+                                <td class="px-6 py-4"><?php echo e($usuario->id); ?></td>
+                                <td class="px-6 py-4"><?php echo e($usuario->name); ?></td>
+                                <td class="px-6 py-4"><?php echo e($usuario->email); ?></td>
+                                <td class="px-6 py-4">
+                                    <span class="px-2 py-1 text-xs rounded bg-blue-100 text-blue-800">
+                                        <?php echo e($usuario->roles->first()->name ?? 'Sin rol'); ?>
+
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <a href="<?php echo e(route('admin.users.index')); ?>" class="text-blue-500 hover:text-blue-700">Editar</a>
+                                </td>
+                            </tr>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
- <?php echo $__env->renderComponent(); ?>
-<?php endif; ?>
-<?php if (isset($__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54)): ?>
-<?php $attributes = $__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54; ?>
-<?php unset($__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54); ?>
-<?php endif; ?>
-<?php if (isset($__componentOriginal9ac128a9029c0e4701924bd2d73d7f54)): ?>
-<?php $component = $__componentOriginal9ac128a9029c0e4701924bd2d73d7f54; ?>
-<?php unset($__componentOriginal9ac128a9029c0e4701924bd2d73d7f54); ?>
-<?php endif; ?><?php /**PATH D:\desarrollo\cc2f4\cc2f4\resources\views/admin/dashboard.blade.php ENDPATH**/ ?>
+</body>
+</html><?php /**PATH D:\desarrollo\cc2f4\cc2f4\resources\views/admin/dashboard.blade.php ENDPATH**/ ?>

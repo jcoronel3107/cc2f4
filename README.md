@@ -68,18 +68,22 @@ Administrador	Todo (crear, editar, eliminar, gestionar usuarios, pedidos)	🔧 D
 +++++++++++++++++++++++
 
 
-Resumen final del proyecto - ¡Todo completado!
+RResumen final - Todo lo que tiene tu sistema:
 Módulo	Estado
-Autenticación (Login/Registro)	✅
+Autenticación (registro/login)	✅
 Roles (Admin, Creador, Editor, Consultor)	✅
-Panel de Administración	✅
-CRUD de Productos	✅
-Subida de imágenes con vista previa	✅
+Registro automático con rol Consultor	✅
+Dashboard con botones según el rol	✅
+CRUD de productos	✅
+Subida de imágenes	✅
 Carrito de compras	✅
-Checkout / Finalizar compra	✅
-Historial de pedidos para usuarios	✅
-Gestión de pedidos para Administrador	✅
-Páginas informativas (Conócenos, Servicios)	✅
+Finalizar compra (checkout)	✅
+Historial de pedidos	✅
+Panel de Administración	✅
+Gestión de usuarios (Admin)	✅
+Gestión de pedidos (Admin)	✅
+Páginas Conócenos y Servicios	✅
+Envío de emails de bienvenida	✅
 Estructura completa del sitio
 text
 http://cc2f4.test

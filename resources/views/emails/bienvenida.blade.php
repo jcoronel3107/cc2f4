@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Bienvenido a nuestra tienda</title>
+    <title>Bienvenido a nuestra tienda C2StudioBIM</title>
     <style>
         body {
             font-family: Arial, sans-serif;
