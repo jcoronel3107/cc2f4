@@ -44,15 +44,19 @@ class PedidoAdminController extends Controller implements HasMiddleware
         $estadoAnterior = $pedido->estado;
         $pedido->estado = $request->estado;
         $pedido->save();
-        // Enviar email al cliente cuando el estado cambia
+
+        // Enviar email al cliente cuando el estado cambia (incluyendo cancelado)
         if ($estadoAnterior != $request->estado) {
             try {
                 Mail::to($pedido->user->email)->send(new PedidoEstadoMail($pedido));
+                \Log::info('Email de cambio de estado enviado a: ' . $pedido->user->email . ' - Nuevo estado: ' . $request->estado);
             } catch (\Exception $e) {
                 \Log::error('Error al enviar email de cambio de estado: ' . $e->getMessage());
             }
         }
 
-        return redirect()->back()->with('success', 'Estado del pedido actualizado a ' . ucfirst($pedido->estado));
+        $mensaje = 'Estado del pedido actualizado de ' . ucfirst($estadoAnterior) . ' a ' . ucfirst($pedido->estado);
+        
+        return redirect()->back()->with('success', $mensaje);
     }
 }

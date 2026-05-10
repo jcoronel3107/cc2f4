@@ -3,6 +3,7 @@
 namespace App\Mail;
 
 use App\Models\Pedido;
+use App\Helpers\BankHelper;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
@@ -14,10 +15,12 @@ class PedidoConfirmacionMail extends Mailable
     use Queueable, SerializesModels;
 
     public $pedido;
+    public $bankInfo;
 
     public function __construct(Pedido $pedido)
     {
         $this->pedido = $pedido;
+        $this->bankInfo = BankHelper::getBankInfo();
     }
 
     public function envelope(): Envelope

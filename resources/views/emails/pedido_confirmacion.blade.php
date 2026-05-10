@@ -32,6 +32,14 @@
             border-radius: 5px;
             margin: 20px 0;
         }
+        .bank-info {
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            color: #856404;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
         table {
             width: 100%;
             border-collapse: collapse;
@@ -85,12 +93,26 @@
             <p><strong>Método de pago:</strong> 
                 @switch($pedido->metodo_pago)
                     @case('tarjeta') 💳 Tarjeta @break
-                    @case('transferencia') 🏦 Transferencia @break
+                    @case('transferencia') 🏦 Transferencia Bancaria @break
                     @case('contraentrega') 💵 Contra entrega @break
                     @default {{ $pedido->metodo_pago }}
                 @endswitch
             </p>
         </div>
+
+        <!-- Información bancaria SOLO para transferencias -->
+        @if($pedido->metodo_pago == 'transferencia')
+        <div class="bank-info">
+            <h3 style="margin-top: 0; color: #856404;">🏦 Datos para la transferencia</h3>
+            <p><strong>Banco:</strong> {{ $bankInfo['bank_name'] }}</p>
+            <p><strong>Tipo de cuenta:</strong> {{ $bankInfo['account_type'] }}</p>
+            <p><strong>Número de cuenta:</strong> {{ $bankInfo['account_number'] }}</p>
+            <p><strong>Titular:</strong> {{ $bankInfo['owner'] }}</p>
+            <p><strong>RUC/CI:</strong> {{ $bankInfo['identification'] }}</p>
+            <p style="margin-top: 10px;"><strong>Monto a transferir:</strong> <span style="font-size: 18px; color: #28a745;">${{ number_format($pedido->total, 2) }}</span></p>
+            <p style="margin-top: 10px;"><em>⚠️ Por favor, realiza la transferencia y envía el comprobante a nuestro WhatsApp o correo para confirmar tu pedido.</em></p>
+        </div>
+        @endif
 
         <h3>📦 Productos comprados</h3>
         <table>
@@ -132,7 +154,7 @@
 
     <div class="footer">
         <p>Este es un correo automático, por favor no responder.</p>
-        <p>© {{ date('Y') }} Mi Tienda. Todos los derechos reservados.</p>
+        <p>© {{ date('Y') }} C2Studio BIM. Todos los derechos reservados.</p>
         <p>
             <a href="{{ url('/') }}">Ir a la tienda</a> | 
             <a href="{{ url('/pedidos/historial') }}">Ver mis pedidos</a>

@@ -30,15 +30,24 @@ class CarritoController extends Controller implements HasMiddleware
     }
 
     // Agregar producto al carrito
-    public function add(Request $request, Producto $producto)
+   public function add(Request $request, Producto $producto)
     {
         $cantidad = $request->input('cantidad', 1);
         
+        // Validar que no exceda el stock disponible
+        if ($cantidad > $producto->stock) {
+            return redirect()->back()->with('error', 'No hay suficiente stock. Solo quedan ' . $producto->stock . ' unidades.');
+        }
+        
         $carrito = session()->get('carrito', []);
         
-        // Si el producto ya existe en el carrito, aumentar cantidad
+        // Si el producto ya existe en el carrito, verificar que la nueva cantidad no exceda el stock
         if (isset($carrito[$producto->id])) {
-            $carrito[$producto->id]['cantidad'] += $cantidad;
+            $nuevaCantidad = $carrito[$producto->id]['cantidad'] + $cantidad;
+            if ($nuevaCantidad > $producto->stock) {
+                return redirect()->back()->with('error', 'No puedes agregar más. Stock máximo disponible: ' . $producto->stock . ' unidades.');
+            }
+            $carrito[$producto->id]['cantidad'] = $nuevaCantidad;
         } else {
             // Agregar nuevo producto al carrito
             $carrito[$producto->id] = [
@@ -58,16 +67,33 @@ class CarritoController extends Controller implements HasMiddleware
 
     // Actualizar cantidad de un producto
     public function update(Request $request, $id)
-    {
-        $carrito = session()->get('carrito', []);
+{
+    $carrito = session()->get('carrito', []);
+    
+    if (isset($carrito[$id])) {
+        $nuevaCantidad = $request->input('cantidad');
         
-        if (isset($carrito[$id])) {
-            $carrito[$id]['cantidad'] = $request->input('cantidad');
-            session()->put('carrito', $carrito);
+        // Validar contra la base de datos
+        $producto = Producto::find($id);
+        if (!$producto) {
+            return redirect()->route('carrito.index')->with('error', 'El producto ya no existe.');
         }
         
-        return redirect()->route('carrito.index')->with('success', 'Carrito actualizado');
+        if ($nuevaCantidad > $producto->stock) {
+            return redirect()->route('carrito.index')->with('error', 'No puedes pedir ' . $nuevaCantidad . ' unidades. Solo hay ' . $producto->stock . ' disponibles.');
+        }
+        
+        if ($nuevaCantidad < 1) {
+            return redirect()->route('carrito.index')->with('error', 'La cantidad mínima es 1.');
+        }
+        
+        $carrito[$id]['cantidad'] = $nuevaCantidad;
+        $carrito[$id]['stock'] = $producto->stock; // Actualizar stock en sesión
+        session()->put('carrito', $carrito);
     }
+    
+    return redirect()->route('carrito.index')->with('success', 'Carrito actualizado');
+}
 
     // Eliminar producto del carrito
     public function remove($id)
@@ -83,7 +109,7 @@ class CarritoController extends Controller implements HasMiddleware
     }
 
     // Vaciar todo el carrito
-    public function clear()
+     public function clear()
     {
         session()->forget('carrito');
         

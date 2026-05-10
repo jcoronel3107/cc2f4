@@ -28,9 +28,17 @@
         </nav>
 
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Mensajes de éxito -->
             @if(session('success'))
                 <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
                     {{ session('success') }}
+                </div>
+            @endif
+
+            <!-- Mensajes de error -->
+            @if(session('error'))
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                    {{ session('error') }}
                 </div>
             @endif
 
@@ -54,7 +62,7 @@
                         </thead>
                         <tbody class="divide-y divide-gray-200">
                             @foreach($carrito as $id => $item)
-                            <tr>
+                            <tr id="fila-{{ $id }}">
                                 <td class="px-6 py-4">
                                     <div class="flex items-center">
                                         @if($item['imagen'])
@@ -66,16 +74,22 @@
                                         @endif
                                         <div class="ml-4">
                                             <h3 class="font-semibold">{{ $item['nombre'] }}</h3>
+                                            <p class="text-sm text-gray-500">Stock disponible: <strong>{{ $item['stock'] }}</strong></p>
                                         </div>
                                     </div>
                                 </td>
                                 <td class="px-6 py-4">${{ number_format($item['precio'], 2) }}</td>
                                 <td class="px-6 py-4">
-                                    <form action="{{ route('carrito.update', $id) }}" method="POST" class="flex items-center space-x-2">
+                                    <form action="{{ route('carrito.update', $id) }}" method="POST" class="flex items-center space-x-2" onsubmit="return validarCantidad(this, {{ $item['stock'] }})">
                                         @csrf
                                         @method('PUT')
-                                        <input type="number" name="cantidad" value="{{ $item['cantidad'] }}" min="1" max="{{ $item['stock'] }}" class="w-20 border rounded px-2 py-1 text-center">
-                                        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded">Actualizar</button>
+                                        <input type="number" name="cantidad" value="{{ $item['cantidad'] }}" 
+                                               min="1" max="{{ $item['stock'] }}" 
+                                               class="w-20 border rounded px-2 py-1 text-center"
+                                               id="cantidad-{{ $id }}">
+                                        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded">
+                                            Actualizar
+                                        </button>
                                     </form>
                                 </td>
                                 <td class="px-6 py-4 font-semibold">${{ number_format($item['precio'] * $item['cantidad'], 2) }}</td>
@@ -99,7 +113,6 @@
                     </table>
                 </div>
 
-                <!-- SOLO UN BOTÓN FINALIZAR COMPRA - ESTE ES EL CORRECTO -->
                 <div class="mt-6 flex justify-between">
                     <form action="{{ route('carrito.clear') }}" method="POST">
                         @csrf
@@ -115,5 +128,24 @@
             @endif
         </div>
     </div>
+
+    <script>
+        function validarCantidad(form, stockMaximo) {
+            const input = form.querySelector('input[name="cantidad"]');
+            const cantidad = parseInt(input.value);
+            
+            if (cantidad < 1) {
+                alert('La cantidad mínima es 1');
+                return false;
+            }
+            
+            if (cantidad > stockMaximo) {
+                alert('No puedes seleccionar ' + cantidad + ' unidades. Stock máximo disponible: ' + stockMaximo);
+                return false;
+            }
+            
+            return true;
+        }
+    </script>
 </body>
 </html>

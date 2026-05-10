@@ -27,6 +27,31 @@
         </nav>
 
         <div class="max-w-6xl mx-auto px-4 py-8">
+            <!-- Validación de stock - MOVER AQUÍ -->
+            @php
+                $stockError = false;
+                $productosConError = [];
+                foreach($carrito as $id => $item) {
+                    if($item['cantidad'] > $item['stock']) {
+                        $stockError = true;
+                        $productosConError[] = $item['nombre'];
+                    }
+                }
+            @endphp
+
+            @if($stockError)
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                    <strong>⚠️ Error en el carrito</strong><br>
+                    Algunos productos exceden el stock disponible:
+                    <ul class="list-disc ml-5 mt-2">
+                        @foreach($productosConError as $producto)
+                            <li>{{ $producto }}</li>
+                        @endforeach
+                    </ul>
+                    <p class="mt-2">Por favor, <a href="{{ route('carrito.index') }}" class="underline font-bold">regresa al carrito</a> y corrige las cantidades.</p>
+                </div>
+            @endif
+
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <!-- Formulario de checkout -->
                 <div class="md:col-span-2">
@@ -61,7 +86,7 @@
                         </form>
                     </div>
                 </div>
-                
+
                 <!-- Resumen del pedido -->
                 <div>
                     <div class="bg-white rounded-lg shadow p-6 sticky top-4">
@@ -73,6 +98,9 @@
                                 <div>
                                     <span class="font-medium">{{ $item['nombre'] }}</span>
                                     <span class="text-gray-500"> x{{ $item['cantidad'] }}</span>
+                                    @if($item['cantidad'] > $item['stock'])
+                                        <span class="text-red-500 text-xs ml-2">⚠️ Excede stock</span>
+                                    @endif
                                 </div>
                                 <span>${{ number_format($item['precio'] * $item['cantidad'], 2) }}</span>
                             </div>
@@ -86,9 +114,15 @@
                             </div>
                         </div>
                         
-                        <button type="submit" form="checkoutForm" class="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-3 px-4 rounded mt-6">
-                            Confirmar Pedido
-                        </button>
+                        @if($stockError)
+                            <button type="button" class="w-full bg-gray-400 text-white font-bold py-3 px-4 rounded mt-6 cursor-not-allowed" disabled>
+                                ❌ Corrige las cantidades
+                            </button>
+                        @else
+                            <button type="submit" form="checkoutForm" class="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-3 px-4 rounded mt-6">
+                                Confirmar Pedido
+                            </button>
+                        @endif
                     </div>
                 </div>
             </div>

@@ -37,7 +37,7 @@ class PedidoController extends Controller implements HasMiddleware
         
         return view('pedidos.checkout', compact('carrito', 'total'));
     }
-/*
+
     // Procesar el pedido
     public function procesar(Request $request)
     {
@@ -51,6 +51,22 @@ class PedidoController extends Controller implements HasMiddleware
         
         if (empty($carrito)) {
             return redirect()->route('carrito.index')->with('error', 'Carrito vacío');
+        }
+
+        // VALIDAR STOCK CONTRA LA BASE DE DATOS
+        $erroresStock = [];
+        foreach ($carrito as $id => $item) {
+            $producto = Producto::find($id);
+            if (!$producto) {
+                $erroresStock[] = "El producto '{$item['nombre']}' ya no existe.";
+            } elseif ($item['cantidad'] > $producto->stock) {
+                $erroresStock[] = "{$item['nombre']}: solicitaste {$item['cantidad']}, solo hay {$producto->stock} unidades disponibles.";
+            }
+        }
+        
+        if (count($erroresStock) > 0) {
+            $mensaje = 'Error en el carrito:<br>' . implode('<br>', $erroresStock);
+            return redirect()->route('carrito.index')->with('error', $mensaje);
         }
 
         DB::beginTransaction();
@@ -75,15 +91,8 @@ class PedidoController extends Controller implements HasMiddleware
                 'direccion_envio' => $request->direccion,
                 'notas' => $request->notas
             ]);
-            // 🔴 IMPORTANTE: Cargar los detalles del pedido ANTES de enviar el email
-        $pedido->load('detalles');
-            // Enviar email de confirmación
-            try {
-                Mail::to(auth()->user()->email)->send(new PedidoConfirmacionMail($pedido));
-            } catch (\Exception $e) {
-                \Log::error('Error al enviar email: ' . $e->getMessage());
-            }
-            // Crear detalles del pedido
+            
+            // Crear detalles del pedido y actualizar stock
             foreach ($carrito as $id => $item) {
                 DetallePedido::create([
                     'pedido_id' => $pedido->id,
@@ -101,7 +110,17 @@ class PedidoController extends Controller implements HasMiddleware
                     $producto->save();
                 }
             }
+            
+            // Cargar detalles para el email
             $pedido->load('detalles');
+            
+            // Enviar email de confirmación
+            try {
+                Mail::to(auth()->user()->email)->send(new PedidoConfirmacionMail($pedido));
+            } catch (\Exception $e) {
+                \Log::error('Error al enviar email: ' . $e->getMessage());
+            }
+            
             // Vaciar carrito
             session()->forget('carrito');
             
@@ -115,95 +134,6 @@ class PedidoController extends Controller implements HasMiddleware
             return back()->with('error', 'Error al procesar el pedido: ' . $e->getMessage());
         }
     }
-*/
-    public function procesar(Request $request)
-{
-    $request->validate([
-        'direccion' => 'required|string|min:5',
-        'metodo_pago' => 'required|in:tarjeta,transferencia,contraentrega',
-        'notas' => 'nullable|string'
-    ]);
-
-    $carrito = session()->get('carrito', []);
-    
-    if (empty($carrito)) {
-        return redirect()->route('carrito.index')->with('error', 'Carrito vacío');
-    }
-
-    DB::beginTransaction();
-    
-    try {
-        // Calcular total
-        $total = 0;
-        foreach ($carrito as $item) {
-            $total += $item['precio'] * $item['cantidad'];
-        }
-        
-        // Generar número de pedido único
-        $numeroPedido = 'PED-' . strtoupper(uniqid());
-        
-        // Crear pedido
-        $pedido = Pedido::create([
-            'user_id' => auth()->id(),
-            'numero_pedido' => $numeroPedido,
-            'total' => $total,
-            'estado' => 'pendiente',
-            'metodo_pago' => $request->metodo_pago,
-            'direccion_envio' => $request->direccion,
-            'notas' => $request->notas
-        ]);
-        
-        // ==========================================
-        // PRIMERO: Crear detalles del pedido
-        // ==========================================
-        foreach ($carrito as $id => $item) {
-            DetallePedido::create([
-                'pedido_id' => $pedido->id,
-                'producto_id' => $id,
-                'producto_nombre' => $item['nombre'],
-                'producto_precio' => $item['precio'],
-                'cantidad' => $item['cantidad'],
-                'subtotal' => $item['precio'] * $item['cantidad']
-            ]);
-            
-            // Actualizar stock del producto
-            $producto = Producto::find($id);
-            if ($producto) {
-                $producto->stock -= $item['cantidad'];
-                $producto->save();
-            }
-        }
-        
-        // ==========================================
-        // SEGUNDO: Cargar los detalles del pedido (DESPUÉS de crearlos)
-        // ==========================================
-        $pedido->load('detalles');
-        
-        // ==========================================
-        // TERCERO: Enviar email de confirmación
-        // ==========================================
-        try {
-            Mail::to(auth()->user()->email)->send(new PedidoConfirmacionMail($pedido));
-        } catch (\Exception $e) {
-            \Log::error('Error al enviar email: ' . $e->getMessage());
-        }
-        
-        // Vaciar carrito
-        session()->forget('carrito');
-        
-        DB::commit();
-        
-        return redirect()->route('pedidos.confirmacion', $pedido)
-            ->with('success', '¡Pedido realizado con éxito!');
-            
-    } catch (\Exception $e) {
-        DB::rollBack();
-        return back()->with('error', 'Error al procesar el pedido: ' . $e->getMessage());
-    }
-}
-
-
-
 
     // Mostrar confirmación
     public function confirmacion(Pedido $pedido)
