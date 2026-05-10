@@ -1,13 +1,19 @@
 
-Optimizar para producción
-
-# Compilar assets para producción
+Resumen rápido para producción:
+# 1. Optimizar proyecto
 npm run build
-
-# Optimizar configuración
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
+
+# 2. Subir archivos al hosting (FTP o Git)
+# 3. Configurar .env con datos de producción
+# 4. Ejecutar migraciones
+php artisan migrate --force
+
+# 5. Crear enlace simbólico para imágenes
+php artisan storage:link
+
 
 Subir archivos al servidor
 # Excluir archivos innecesarios
@@ -23,13 +29,7 @@ Asegúrate que el punto de entrada apunte a public/index.php
 
 Configura la base de datos desde el panel del hosting
 
-# 2. Subir archivos al hosting (FTP o Git)
-# 3. Configurar .env con datos de producción
-# 4. Ejecutar migraciones
-php artisan migrate --force
 
- 5. Crear enlace simbólico para imágenes
-php artisan storage:link
 
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
