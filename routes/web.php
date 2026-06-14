@@ -48,6 +48,16 @@ Route::middleware(['auth', RoleMiddleware::class . ':Administrador'])->prefix('a
 // Productos
 Route::resource('productos', ProductoController::class);
 
+// Rutas para administración de productos (proteger con middleware admin si es necesario)
+Route::get('products/create', 'ProductController@create')->name('products.create');
+Route::post('products', 'ProductController@store')->name('products.store');
+Route::get('products/{id}/edit', 'ProductController@edit')->name('products.edit');
+Route::put('products/{id}', 'ProductController@update')->name('products.update');
+Route::delete('products/{id}', 'ProductController@destroy')->name('products.destroy');
+
+
+
+
 // Carrito
 Route::middleware(['auth'])->prefix('carrito')->group(function () {
     Route::get('/', [CarritoController::class, 'index'])->name('carrito.index');
